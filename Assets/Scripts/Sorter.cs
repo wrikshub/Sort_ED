@@ -4,8 +4,5 @@ using UnityEngine;
 
 public abstract class Sorter : ScriptableObject
 {
-    public virtual void Sort(int[] numbers)
-    {
-        
-    }
+    public virtual void Sort(ref List<Ball> balls) { }
 }
