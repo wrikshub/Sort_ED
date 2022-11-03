@@ -149,7 +149,7 @@ Transform:
   m_GameObject: {fileID: 302427982}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -5.400025, y: -5.400025, z: -5.400025}
+  m_LocalScale: {x: -3.4993181, y: -3.4993181, z: -3.4993181}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1969256377}
@@ -236,17 +236,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 560e020bba10ddb4d9fdf06533252ad8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sorter: {fileID: 11400000, guid: 87b1213ce59623a43a8586280cc44388, type: 2}
+  sorter: {fileID: 11400000, guid: b3d9fc4cd59f99b44a1aac77e625124e, type: 2}
   ball: {fileID: 8529969479156994976, guid: 7a716306de3c3be43a9ac9d036f87bdb, type: 3}
   minSpeed: 1
   maxSpeed: 10
   target: {fileID: 1969256377}
   bounds: {x: 5, y: 5}
-  minAmount: 5000
-  maxAmount: 5000
-  threshold: 1237
+  minAmount: 2
+  maxAmount: 5
+  threshold: 1
   balls: []
-  ShouldSort: 1
 --- !u!4 &466390503
 Transform:
   m_ObjectHideFlags: 0
