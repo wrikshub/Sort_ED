@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -69,9 +70,9 @@ public class SortManager : MonoBehaviour
         }
     }
 
-    public void Sort()
+    private void Sort()
     {
-        sorter.Sort(balls);
+        balls = sorter.Sort(balls);
     }
 
     public void StartSimulation()
