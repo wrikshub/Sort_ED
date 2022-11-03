@@ -23,23 +23,26 @@ public class SortManager : MonoBehaviour
     //TODO ONVALIDATE !!! CANNOT BE HIGHER THAN MINAMOUNT
     [Header("Threshold")] public int threshold = 1;
 
-     public List<Ball> balls = new List<Ball>();
+     public Ball[] balls;
 
     public void GenerateBalls()
     {
         int length = Random.Range(minAmount, maxAmount);
+        balls = new Ball[length];
         for (int i = 0; i < length; i++)
         {
             var theball = Instantiate(ball, Vector3.zero, Quaternion.identity);
             theball.transform.parent = transform;
 
-            theball.GetComponent<Ball>().InitBall(target,
+            var ballComponent = theball.GetComponent<Ball>();
+            
+            ballComponent.InitBall(target,
                 Random.Range(minSpeed, maxSpeed),
                 new Vector2(Random.Range(-1f, 1f),
                     Random.Range(-1f, 1f)).normalized,
                 bounds, this);
 
-            balls.Add(theball.GetComponent<Ball>());
+            balls[i] = ballComponent;
         }
     }
 
@@ -47,28 +50,19 @@ public class SortManager : MonoBehaviour
     {
         StartSimulation();
     }
-
-    private void ResetBalls()
-    {
-        for (int i = 0; i < balls.Count; i++)
-        {
-            balls[i].DstFromTarget = balls[i].GetDistance();
-        }
-    }
     
     void Update()
     {
-        
         Sort();
 
         //TODO Move this to Ball.cs
-        if (balls.Count == 0) return;
-        for (int i = 0; i < balls.Count; i++)
+        if (balls.Length == 0) return;
+        for (int i = 0; i < balls.Length; i++)
         {
             balls[i].IsWithin = false;
         }
 
-        if (balls.Count < threshold) return;
+        if (balls.Length < threshold) return;
         for (int i = 0; i < threshold; i++)
         {
             balls[i].IsWithin = true;
@@ -77,7 +71,7 @@ public class SortManager : MonoBehaviour
 
     public void Sort()
     {
-        sorter.Sort(ref balls);
+        sorter.Sort(balls);
     }
 
     public void StartSimulation()

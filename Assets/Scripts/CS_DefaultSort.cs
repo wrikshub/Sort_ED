@@ -8,10 +8,10 @@ using UnityEngine.Profiling;
 [CreateAssetMenu(menuName = "Sort/CS Default Sort")]
 public class CS_DefaultSort : Sorter
 {
-    public override void Sort(ref List<Ball> balls)
+    public override void Sort(Ball[] balls)
     {
         Profiler.BeginSample("Trial");
-        balls = balls.OrderBy(balls => balls.DstFromTarget).ToList();
+        balls = balls.OrderBy(x => x.DstFromTarget).ToArray();
         Profiler.EndSample();
     }
 }

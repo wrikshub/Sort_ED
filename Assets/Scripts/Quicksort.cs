@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Sort/Quicksort")]
 public class Quicksort : Sorter
 {
-    public override void Sort(ref List<Ball> balls)
+    public override void Sort(Ball[] balls)
     {
         throw new System.NotImplementedException();
     }
