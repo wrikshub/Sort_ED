@@ -8,8 +8,6 @@ public class Insertionsort : Sorter
 {
     public override void Sort(Ball[] balls)
     {
-        
-        
         for (int i = 0; i < balls.Length; i++)
         {
             for (int j = i; 0 < j && balls[i].DstFromTarget < balls[j - 1].DstFromTarget; j--)
@@ -19,8 +17,6 @@ public class Insertionsort : Sorter
                 balls[j].DstFromTarget = temp;
             }
         }
-        
-        
 
         for (int i = 0; i < balls.Length; i++)
         {
