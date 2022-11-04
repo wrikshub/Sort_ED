@@ -5,50 +5,70 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Sort/Mergesort")]
 public class Mergesort : Sorter
 {
-    //https://en.wikipedia.org/wiki/Merge_sort
-    public override Ball[] Sort(Ball[] balls)
+    //https://www.geeksforgeeks.org/merge-sort/
+    public override Ball[] Sort(Ball[] _balls)
     {
-        var temp = balls;
-        MergeSort(balls, temp, 0);
-        //fix :p
-        return temp;
+        MergeSort(_balls, 0, _balls.Length - 1);
+        return _balls;
     }
 
-    private void MergeSort(Ball[] A, Ball[] B, int n)
+    void Merge(Ball[] balls, int l, int m, int r)
     {
-        B = A;
-        SplitMerge(B, 0, n, A);
-    }
-    
-    private void SplitMerge(Ball[] B, int begin, int end, Ball[] A)
-    {
-        if (end - begin <= 1)
-            return;
+        int n1 = m - l + 1;
+        int n2 = r - m;
 
-        int middle = (end + begin) / 2;
+        Ball[] L = new Ball[n1];
+        Ball[] M = new Ball[n2];
+        int i, j;
         
-        SplitMerge(A, begin, middle, B);
-        SplitMerge(A, middle, end, B);
-        Merge(B, begin, middle, end, A);
-    }
+        for (i = 0; i < n1; ++i)
+            L[i] = balls[l + i];
+        for (j = 0; j < n2; ++j)
+            M[j] = balls[m + 1 + j];
 
-    private void Merge(Ball[] A, int begin, int middle, int end, Ball[] B)
-    {
-        int i = begin;
-        int j = middle;
+        i = 0;
+        j = 0;
+        int k = l;
 
-        for (int k = begin; k < end; k++)
+        while (i < n1 && j < n2)
         {
-            if (i < middle && (j >= end || A[i].DstFromTarget <= A[j].DstFromTarget))
+            if (L[i].DstFromTarget <= M[j].DstFromTarget)
             {
-                B[k] = A[i];
+                balls[k] = L[i];
                 i++;
             }
             else
             {
-                B[k] = A[j];
+                balls[k] = M[j];
                 j++;
             }
+            k++;
+        }
+
+        while (i < n1)
+        {
+            balls[k] = L[i];
+            i++;
+            k++;
+        }
+        
+        while (j < n2)
+        {
+            balls[k] = M[j];
+            j++;
+            k++;
+        }
+    }
+
+    void MergeSort(Ball[] balls, int l, int r)
+    {
+        if (l < r)
+        {
+            int m = l + (r - l) / 2;
+            
+            MergeSort(balls, l, m);
+            MergeSort(balls, m + 1, r);
+            Merge(balls, l, m, r);
         }
     }
 }

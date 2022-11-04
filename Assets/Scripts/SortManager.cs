@@ -75,6 +75,42 @@ public class SortManager : MonoBehaviour
         balls = sorter.Sort(balls);
     }
 
+    public void Clear()
+    {
+        for (int i = balls.Length; i > 0; i--)
+        {
+            Destroy(balls[i]);
+        }
+    }
+    
+    public void AddBalls(int amount)
+    {
+        Ball[] tempBalls = balls;
+        balls = new Ball[balls.Length + amount];
+        
+        //DRY !!!
+        for (int i = tempBalls.Length; i < balls.Length; i++)
+        {
+            var theball = Instantiate(ball, Vector3.zero, Quaternion.identity);
+            theball.transform.parent = transform;
+
+            var ballComponent = theball.GetComponent<Ball>();
+            
+            ballComponent.InitBall(target,
+                Random.Range(minSpeed, maxSpeed),
+                new Vector2(Random.Range(-1f, 1f),
+                    Random.Range(-1f, 1f)).normalized,
+                bounds, this);
+
+            balls[i] = ballComponent;
+        }
+        
+        for (int i = 0; i < tempBalls.Length; i++)
+        {
+            balls[i] = tempBalls[i];
+        }
+    }
+    
     public void StartSimulation()
     {
         GenerateBalls();

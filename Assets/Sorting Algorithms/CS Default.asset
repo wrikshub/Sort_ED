@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d37880e60929984cb5993d248c0462f, type: 3}
   m_Name: CS Default
   m_EditorClassIdentifier: 
+  sorterName: CS_Sort

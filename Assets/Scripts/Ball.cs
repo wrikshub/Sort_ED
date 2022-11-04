@@ -21,12 +21,14 @@ public class Ball : MonoBehaviour
 
     //Calculated
     public float DstFromTarget { set; get; }
+    private float realRadius;
 
     private void OnEnable()
     {
         transform.localScale = Vector3.one * radius * 0.5f;
         timeSinceLastCollision = collisionThreshold;
         sRend = GetComponentInChildren<SpriteRenderer>();
+        realRadius = radius * 0.5f;
     }
 
     internal virtual void Update()
@@ -36,40 +38,42 @@ public class Ball : MonoBehaviour
 
         timeSinceLastCollision += Time.deltaTime;
 
+        Vector3 position = transform.position;
+        
         for (int i = 0; i < substeps; i++)
         {
-            //Do not multiply radius during runtime, fix later
-            if (transform.position.x + radius * 0.5f > bounds.x)
+            if (transform.position.x + realRadius > bounds.x)
             {
-                float delta =  bounds.x - (transform.position.x + radius * 0.5f);
-                transform.position = new Vector3(transform.position.x + delta, transform.position.y);
+                float delta =  bounds.x - (transform.position.x + realRadius);
+                position = new Vector3(position.x + delta, position.y);
                 direction *= Collided(new Vector2(-1, 1));
             }
 
-            if (transform.position.x - radius * 0.5f < -bounds.x)
+            if (transform.position.x - realRadius < -bounds.x)
             {
-                float delta =  -bounds.x - (transform.position.x - radius * 0.5f);
-                transform.position = new Vector3(transform.position.x + delta, transform.position.y);
+                float delta =  -bounds.x - (transform.position.x - realRadius);
+                position = new Vector3(position.x + delta, position.y);
                 direction *= Collided(new Vector2(-1, 1));
             }
 
-            if (transform.position.y + radius * 0.5f > bounds.y)
+            if (transform.position.y + realRadius > bounds.y)
             {
-                float delta =  bounds.y - (transform.position.y + radius * 0.5f);
-                transform.position = new Vector3(transform.position.x, transform.position.y + delta);
+                float delta =  bounds.y - (transform.position.y + realRadius);
+                position = new Vector3(position.x, position.y + delta);
                 direction *= Collided(new Vector2(1, -1));
             }
 
-            if (transform.position.y - radius * 0.5f < -bounds.y)
+            if (transform.position.y - realRadius < -bounds.y)
             {
-                float delta =  -bounds.y - (transform.position.y - radius * 0.5f);
-                transform.position = new Vector3(transform.position.x, transform.position.y + delta);
+                float delta =  -bounds.y - (transform.position.y - realRadius);
+                position = new Vector3(position.x, position.y + delta);
                 direction *= Collided(new Vector2(1, -1));
             }
         }
-
-        transform.position += (Vector3) (direction * speed * Time.deltaTime);
-
+        
+        position += (Vector3) (direction * speed * Time.deltaTime);
+        transform.position = position;
+        
         DstFromTarget = GetDistance();
     }
 

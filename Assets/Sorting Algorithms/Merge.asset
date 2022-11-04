@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db0eee7c9ea33434d915bd80343538e8, type: 3}
   m_Name: Merge
   m_EditorClassIdentifier: 
+  sorterName: MergeSort

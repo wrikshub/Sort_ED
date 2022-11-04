@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e73b74b384f449043a419604d4cebfee, type: 3}
   m_Name: Insertion
   m_EditorClassIdentifier: 
+  sorterName: InsertionSort
