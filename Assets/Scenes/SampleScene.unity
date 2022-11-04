@@ -242,8 +242,8 @@ MonoBehaviour:
   maxSpeed: 10
   target: {fileID: 1969256377}
   bounds: {x: 5, y: 5}
-  minAmount: 2
-  maxAmount: 5
+  minAmount: 100
+  maxAmount: 100
   threshold: 1
   balls: []
 --- !u!4 &466390503
