@@ -129,6 +129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95e6640bae64f2b44904a8d260c1669e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  substeps: 4
+  IsWithin: 0
+  substeps: 1
   radius: 0.5
   collisionThreshold: 0.05

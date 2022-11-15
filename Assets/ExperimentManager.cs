@@ -7,11 +7,15 @@ public class ExperimentManager : MonoBehaviour
 {
     [SerializeField] private SortManager _sortManager;
     [SerializeField] private float experimentDuration = 60f;
-    [SerializeField] private int interval = 100;
+    [SerializeField] private float interval = 2f;
+    [SerializeField] private int amount = 100;
     [SerializeField] private Sorter[] sorters;
     private bool running = true;
     private int sorterIndex = 0;
-    private float timeTaken = 0f;
+    public float timeTaken = 0f;
+    public float timeTakenSmall = 0f;
+    private TestData td;
+
     private void Start()
     {
         running = true;
@@ -23,47 +27,69 @@ public class ExperimentManager : MonoBehaviour
     {
         if (!running) return;
         
-        ExperimentEveryFrame();
-        
-        timeTaken += Time.deltaTime;
+        float dt = Time.deltaTime;
+        timeTakenSmall += dt;
+        timeTaken += dt;
+
+        if (timeTakenSmall > interval)
+        {
+            timeTakenSmall = 0;
+            _sortManager.AddBalls(amount);
+
+            SampleSorts();
+        }
+
         if (timeTaken >= experimentDuration)
         {
             NextExperiment();
-            experimentDuration = 0;
+            timeTaken = 0;
+            _sortManager.Clear();
+            //RecordData
         }
     }
 
+    private void SampleSorts()
+    {
+        //Sample sorting-data here
+        //td.ms
+        //td.fps
+        //td.name
+    }
+    
     private void StartExperiment()
     {
-        _sortManager.AddBalls(100);
+        _sortManager.AddBalls(amount);
     }
 
     private void RestartExperiment()
     {
         _sortManager.Clear();
     }
-    
-    private void ExperimentEveryFrame()
-    {
-        //Add() balls in intervals here
-        
-    }
-    
+
     private void NextExperiment()
     {
         sorterIndex++;
-        if (sorterIndex > sorters.Length)
+        if (sorterIndex >= sorters.Length)
         {
             EndExperiment();
         }
-
-        _sortManager.sorter = sorters[sorterIndex];
+        else
+        {
+            _sortManager.sorter = sorters[sorterIndex];
+        }
     }
 
     private void EndExperiment()
     {
         running = false;
-        
-        //Output data collected
+        _sortManager.Clear();
+        //Final output data collected
     }
+}
+
+struct TestData
+{
+    public string[] name;
+    public float[] ms;
+    public float[] fps;
 }

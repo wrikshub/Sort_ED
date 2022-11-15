@@ -31,7 +31,7 @@ public class Ball : MonoBehaviour
         realRadius = radius * 0.5f;
     }
 
-    internal virtual void Update()
+    internal virtual void FixedUpdate()
     {
         SetColor(Color.white);
         SetColor(IsWithin ? Color.red : Color.white);

@@ -22,7 +22,8 @@ public class SortManager : MonoBehaviour
     public int maxAmount;
 
     //TODO ONVALIDATE !!! CANNOT BE HIGHER THAN MINAMOUNT
-    [Header("Threshold")] public int threshold = 1;
+    [Header("Threshold")] public bool thresholdIsHalf = false;
+    public int threshold = 1;
 
      public Ball[] balls;
 
@@ -68,6 +69,9 @@ public class SortManager : MonoBehaviour
         {
             balls[i].IsWithin = true;
         }
+        
+        if(thresholdIsHalf)
+            threshold = balls.Length / 2;
     }
 
     private void Sort()
@@ -77,10 +81,11 @@ public class SortManager : MonoBehaviour
 
     public void Clear()
     {
-        for (int i = balls.Length; i > 0; i--)
+        for (int i = balls.Length - 1; i >= 0; i--)
         {
-            Destroy(balls[i]);
+            Destroy(balls[i].gameObject);
         }
+        balls = Array.Empty<Ball>();
     }
     
     public void AddBalls(int amount)

@@ -12,10 +12,10 @@ public class SortRecorder : MonoBehaviour
 
     private void Start()
     {
-        WriteResultsToFile();
+        //WriteResultsToFile();
     }
 
-    private void WriteResultsToFile()
+    private void WriteResultsToFile(string algorithm, float[] ms, float[] fps)
     {
         using (StreamWriter streamWriter = new StreamWriter(filename))
         {
