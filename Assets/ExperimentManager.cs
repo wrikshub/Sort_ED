@@ -34,6 +34,11 @@ public class ExperimentManager : MonoBehaviour
         if (timeTakenSmall > interval)
         {
             timeTakenSmall = 0;
+            
+            //CLEAR BALLS BEFORE ADDING AND THEN ADD DOUBLE
+            //CLEAR BALLS BEFORE ADDING AND THEN ADD DOUBLE
+            //CLEAR BALLS BEFORE ADDING AND THEN ADD DOUBLE
+
             _sortManager.AddBalls(amount);
 
             SampleSorts();
@@ -44,7 +49,6 @@ public class ExperimentManager : MonoBehaviour
             NextExperiment();
             timeTaken = 0;
             _sortManager.Clear();
-            //RecordData
         }
     }
 
