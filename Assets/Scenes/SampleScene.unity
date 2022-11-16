@@ -276,10 +276,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 011bde91be7a98b4099575ebfc7f4298, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filename: SimulationResult.csv
-  identifier: FPS
+  filename: Result.csv
   sm: {fileID: 466390502}
   em: {fileID: 466390505}
+  td:
+    name: []
+    instances: 
+    ms: []
+  entriesForAvg: 100
 --- !u!114 &466390505
 MonoBehaviour:
   m_ObjectHideFlags: 0

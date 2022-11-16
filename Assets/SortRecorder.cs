@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -15,8 +16,11 @@ public class SortRecorder : MonoBehaviour
     private Recorder recorder;
     [SerializeField] private TestData td;
     private Sorter prevSorter;
+    [SerializeField] private int entriesForAvg = 200;
 
     private List<float> milliseconds = new List<float>();
+
+    private bool done = false;
 
     private void OnEnable()
     {
@@ -33,33 +37,23 @@ public class SortRecorder : MonoBehaviour
         newSorter.OnSorted += OnSorted;
         prevSorter = newSorter;
     }
-    
+
     private void OnSorted()
     {
-        if (sm.sorter is CS_DefaultSort)
-        {
-            
-        }
-        if (sm.sorter is Insertionsort)
-        {
-            
-        }
-        if(sm.sorter is Mergesort)
-        {
-            
-        }
-        
+        if (done) return;
+        if (sm.sorter is CS_DefaultSort) { recorder = Recorder.Get("CS_Default"); }
+        if (sm.sorter is Insertionsort)  { recorder = Recorder.Get("Insertion");  }
+        if (sm.sorter is Mergesort)      { recorder = Recorder.Get("Merge");      }
+
         if (recorder.isValid)
         {
-            print(recorder.elapsedNanoseconds * 0.000001f);
-            return;
             milliseconds.Add(recorder.elapsedNanoseconds * 0.000001f);
-            if (milliseconds.Count > 200)
+            if (milliseconds.Count > entriesForAvg)
             {
-                //td.name.Add(sm.sorter.sorterName);
-                //td.ms.Add(milliseconds.Average());
-                //td.instances.Add(sm.balls.Length);
-                //milliseconds.Clear();
+                td.name.Add(sm.sorter.sorterName);
+                td.ms.Add(milliseconds.Average());
+                td.instances.Add(sm.balls.Length);
+                milliseconds.Clear();
             }
         }
     }
@@ -89,30 +83,42 @@ public class SortRecorder : MonoBehaviour
     {
         //WriteResultsToFile();
         sm.sorter.OnSorted -= OnSorted;
+        WriteResultsToFile(td);
+        //WriteResultsToFile();
     }
-    
+
     private void Start()
     {
         td = new TestData(new List<string>(), new List<int>(), new List<float>());
-        recorder = Recorder.Get("CS_Default");
-        recorder = Recorder.Get("Insertion");
-        recorder = Recorder.Get("Merge");
     }
 
-    private void WriteResultsToFile(string algorithm, int instances, float[] ms, float[] fps)
+    //TODO USE 3 TESTDATAS
+    //TODO USE 3 TESTDATAS
+    //TODO USE 3 TESTDATAS
+    //TODO USE 3 TESTDATAS
+    //TODO USE 3 TESTDATAS
+
+    private void WriteResultsToFile(TestData _td)
     {
         using (StreamWriter streamWriter = new StreamWriter(filename))
         {
-            streamWriter.Write($"instances: {instances}");
+            streamWriter.Write("instances,CS_Default,Insert,Merge");
+            streamWriter.WriteLine(string.Empty);
 
-
-            //if (0 < columnIdentifiers.Count)
-            //{
-            //    streamWriter.Write("; ");
-            //}
+            for (int i = 0; i < _td.name.Count; i++)
+            {
+                streamWriter.Write(_td.instances[i] + ",");
+                streamWriter.Write(1 + ",");
+                streamWriter.Write(1 + ",");
+                streamWriter.Write(1 + ",");
+                //streamWriter.Write(_td.ms[i].ToString(CultureInfo.InvariantCulture) + ",");
+                //streamWriter.Write(_td.ms[i + 9].ToString(CultureInfo.InvariantCulture) + ",");
+                //streamWriter.Write(_td.ms[i + 19].ToString(CultureInfo.InvariantCulture) + ",");
+                streamWriter.WriteLine(string.Empty);
+            }
         }
     }
-    
+
     [System.Serializable]
     public struct TestData
     {
