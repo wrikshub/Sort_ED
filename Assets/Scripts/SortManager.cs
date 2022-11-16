@@ -25,8 +25,11 @@ public class SortManager : MonoBehaviour
     [Header("Threshold")] public bool thresholdIsHalf = false;
     public int threshold = 1;
 
-     public Ball[] balls;
-
+    public Ball[] balls;
+    
+    public event SorterChange OnSorterChange;
+    public delegate void SorterChange(Sorter sorter);
+    
     public void GenerateBalls()
     {
         int length = Random.Range(minAmount, maxAmount);
@@ -51,6 +54,13 @@ public class SortManager : MonoBehaviour
     private void Start()
     {
         StartSimulation();
+    }
+
+    public void ChangeSorter(Sorter _sorter)
+    {
+        sorter = _sorter;
+        sorter.Begin();
+        OnSorterChange?.Invoke(_sorter);
     }
     
     void Update()
@@ -119,5 +129,6 @@ public class SortManager : MonoBehaviour
     public void StartSimulation()
     {
         GenerateBalls();
+        sorter.Begin();
     }
 }

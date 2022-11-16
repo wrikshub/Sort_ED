@@ -1,16 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 [CreateAssetMenu(menuName = "Sort/Mergesort")]
 public class Mergesort : Sorter
 {
     //https://www.geeksforgeeks.org/merge-sort/
+    public override void Begin()
+    {
+        sampler = CustomSampler.Create("Merge");
+    }
+
     public override Ball[] Sort(Ball[] _balls)
     {
+        sampler.Begin();
         MergeSort(_balls, 0, _balls.Length - 1);
+        sampler.End();
         
-        OnSorted?.Invoke(1.25f);
+        OnSorted?.Invoke();
         return _balls;
     }
 

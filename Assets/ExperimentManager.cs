@@ -15,7 +15,6 @@ public class ExperimentManager : MonoBehaviour
     private int sorterIndex = 0;
     public float timeTaken = 0f;
     public float timeTakenSmall = 0f;
-    private TestData td;
 
     public event OntoNextStep OnNextStep;
     public delegate void OntoNextStep();
@@ -85,7 +84,8 @@ public class ExperimentManager : MonoBehaviour
         }
         else
         {
-            _sortManager.sorter = sorters[sorterIndex];
+            _sortManager.ChangeSorter(sorters[sorterIndex]);
+            //_sortManager.sorter = sorters[sorterIndex];
         }
     }
 
@@ -97,12 +97,4 @@ public class ExperimentManager : MonoBehaviour
         
         OnExperimentFinished?.Invoke();
     }
-}
-
-public struct TestData
-{
-    public string[] name;
-    public int instances;
-    public float[] ms;
-    public float[] fps;
 }

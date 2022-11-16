@@ -8,13 +8,18 @@ using UnityEngine.Profiling;
 [CreateAssetMenu(menuName = "Sort/CS Default Sort")]
 public class CS_DefaultSort : Sorter
 {
+    public override void Begin()
+    {
+        sampler = CustomSampler.Create("CS_Default");
+    }
+
     public override Ball[] Sort(Ball[] balls)
     {
+        sampler.Begin();
         balls = balls.OrderBy(x => x.DstFromTarget).ToArray();
+        sampler.End();
         
-        OnSorted?.Invoke(1.25f);
-
-        GameStats.SortTime.Value = 1f;
+        OnSorted?.Invoke();
             
         return balls;
     }

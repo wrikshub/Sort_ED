@@ -2,12 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 [CreateAssetMenu(menuName = "Sort/Insertionsort")]
 public class Insertionsort : Sorter
 {
+    public override void Begin()
+    {
+        sampler = CustomSampler.Create("Insertion");
+    }
+
     public override Ball[] Sort(Ball[] balls)
     {
+        sampler.Begin();
         for (int i = 1; i < balls.Length; i++) {
             Ball ball = balls[i];
             int j = i;
@@ -18,7 +25,8 @@ public class Insertionsort : Sorter
             balls[j] = ball;
         }
         
-        OnSorted?.Invoke(1.25f);
+        OnSorted?.Invoke();
+        sampler.End();
         
         return balls;
     }
