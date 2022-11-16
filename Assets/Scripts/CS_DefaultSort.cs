@@ -10,9 +10,12 @@ public class CS_DefaultSort : Sorter
 {
     public override Ball[] Sort(Ball[] balls)
     {
-        Profiler.BeginSample("Trial");
         balls = balls.OrderBy(x => x.DstFromTarget).ToArray();
-        Profiler.EndSample();
+        
+        OnSorted?.Invoke(1.25f);
+
+        GameStats.SortTime.Value = 1f;
+            
         return balls;
     }
 }

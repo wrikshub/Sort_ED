@@ -9,6 +9,7 @@ public class ExperimentManager : MonoBehaviour
     [SerializeField] private float experimentDuration = 60f;
     [SerializeField] private float interval = 2f;
     [SerializeField] private int amount = 100;
+    public int cumulativeAmount = 0;
     [SerializeField] private Sorter[] sorters;
     private bool running = true;
     private int sorterIndex = 0;
@@ -16,10 +17,17 @@ public class ExperimentManager : MonoBehaviour
     public float timeTakenSmall = 0f;
     private TestData td;
 
+    public event OntoNextStep OnNextStep;
+    public delegate void OntoNextStep();
+
+    public event ExperimentFinished OnExperimentFinished;
+    public delegate void ExperimentFinished();
+
     private void Start()
     {
         running = true;
         sorterIndex = 0;
+        cumulativeAmount = amount;
         StartExperiment();
     }
 
@@ -33,25 +41,27 @@ public class ExperimentManager : MonoBehaviour
 
         if (timeTakenSmall > interval)
         {
-            timeTakenSmall = 0;
-            
-            //CLEAR BALLS BEFORE ADDING AND THEN ADD DOUBLE
-            //CLEAR BALLS BEFORE ADDING AND THEN ADD DOUBLE
-            //CLEAR BALLS BEFORE ADDING AND THEN ADD DOUBLE
-
-            _sortManager.AddBalls(amount);
-
+            NextStep();
             SampleSorts();
         }
 
         if (timeTaken >= experimentDuration)
         {
-            NextExperiment();
             timeTaken = 0;
             _sortManager.Clear();
+            NextExperiment();
         }
     }
 
+    private void NextStep()
+    {
+        timeTakenSmall = 0;
+        cumulativeAmount += amount;
+        _sortManager.Clear();
+        _sortManager.AddBalls(cumulativeAmount);
+        OnNextStep?.Invoke();
+    }
+    
     private void SampleSorts()
     {
         //Sample sorting-data here
@@ -64,14 +74,10 @@ public class ExperimentManager : MonoBehaviour
     {
         _sortManager.AddBalls(amount);
     }
-
-    private void RestartExperiment()
-    {
-        _sortManager.Clear();
-    }
-
+    
     private void NextExperiment()
     {
+        cumulativeAmount = 0;
         sorterIndex++;
         if (sorterIndex >= sorters.Length)
         {
@@ -88,12 +94,15 @@ public class ExperimentManager : MonoBehaviour
         running = false;
         _sortManager.Clear();
         //Final output data collected
+        
+        OnExperimentFinished?.Invoke();
     }
 }
 
-struct TestData
+public struct TestData
 {
     public string[] name;
+    public int instances;
     public float[] ms;
     public float[] fps;
 }

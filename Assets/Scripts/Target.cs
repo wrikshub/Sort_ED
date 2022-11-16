@@ -10,7 +10,14 @@ public class Target : MonoBehaviour
     private void Update()
     {
         if (sm.balls == null) return;
-        //if(sm.threshold > 0 && sm.threshold < sm.balls.Length && sm.balls.Length > 0)
-            //circle.localScale = Vector3.one * (transform.position.magnitude - sm.balls[sm.threshold - 1].transform.position.magnitude) * 2f;
+        if (sm.threshold > 0 && sm.threshold < sm.balls.Length && sm.balls.Length > 0)
+        {
+            //circle.gameObject.SetActive(true);
+            circle.localScale = Vector3.one * (transform.position.magnitude - sm.balls[sm.threshold - 1].transform.position.magnitude) * 2f;
+        }
+        else
+        {
+            //circle.gameObject.SetActive(false);
+        }
     }
 }

@@ -278,6 +278,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   filename: SimulationResult.csv
   identifier: FPS
+  sm: {fileID: 466390502}
+  em: {fileID: 466390505}
 --- !u!114 &466390505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -293,7 +295,8 @@ MonoBehaviour:
   _sortManager: {fileID: 466390502}
   experimentDuration: 3
   interval: 1
-  amount: 100
+  amount: 500
+  cumulativeAmount: 0
   sorters:
   - {fileID: 11400000, guid: 87b1213ce59623a43a8586280cc44388, type: 2}
   - {fileID: 11400000, guid: b3d9fc4cd59f99b44a1aac77e625124e, type: 2}

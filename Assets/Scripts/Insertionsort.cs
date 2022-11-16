@@ -18,6 +18,8 @@ public class Insertionsort : Sorter
             balls[j] = ball;
         }
         
+        OnSorted?.Invoke(1.25f);
+        
         return balls;
     }
 }

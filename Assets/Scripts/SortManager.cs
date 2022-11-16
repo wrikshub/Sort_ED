@@ -57,6 +57,9 @@ public class SortManager : MonoBehaviour
     {
         Sort();
 
+        if(thresholdIsHalf)
+            threshold = balls.Length / 2;
+        
         //TODO Move this to Ball.cs
         if (balls.Length == 0) return;
         for (int i = 0; i < balls.Length; i++)
@@ -69,11 +72,8 @@ public class SortManager : MonoBehaviour
         {
             balls[i].IsWithin = true;
         }
-        
-        if(thresholdIsHalf)
-            threshold = balls.Length / 2;
     }
-
+    
     private void Sort()
     {
         balls = sorter.Sort(balls);
@@ -93,7 +93,7 @@ public class SortManager : MonoBehaviour
         Ball[] tempBalls = balls;
         balls = new Ball[balls.Length + amount];
         
-        //DRY !!!
+        //DRY !!! same as generateballs
         for (int i = tempBalls.Length; i < balls.Length; i++)
         {
             var theball = Instantiate(ball, Vector3.zero, Quaternion.identity);

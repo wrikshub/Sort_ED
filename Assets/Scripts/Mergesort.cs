@@ -9,6 +9,8 @@ public class Mergesort : Sorter
     public override Ball[] Sort(Ball[] _balls)
     {
         MergeSort(_balls, 0, _balls.Length - 1);
+        
+        OnSorted?.Invoke(1.25f);
         return _balls;
     }
 
