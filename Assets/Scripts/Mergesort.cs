@@ -16,9 +16,9 @@ public class Mergesort : Sorter
     {
         sampler.Begin();
         MergeSort(_balls, 0, _balls.Length - 1);
+        sampler.End();
         
         OnSorted?.Invoke();
-        sampler.End();
         return _balls;
     }
 

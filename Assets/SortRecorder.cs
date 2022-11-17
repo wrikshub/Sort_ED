@@ -14,9 +14,11 @@ public class SortRecorder : MonoBehaviour
     [SerializeField] private SortManager sm;
     [SerializeField] private ExperimentManager em;
     private Recorder recorder;
-    [SerializeField] private TestData td;
+    [SerializeField] private TestData[] td = new TestData[3];
+    [SerializeField] private TestData f_td = new TestData();
     private Sorter prevSorter;
     [SerializeField] private int entriesForAvg = 200;
+    private int algoIndex = 0;
 
     private List<float> milliseconds = new List<float>();
 
@@ -36,23 +38,50 @@ public class SortRecorder : MonoBehaviour
         prevSorter.OnSorted -= OnSorted;
         newSorter.OnSorted += OnSorted;
         prevSorter = newSorter;
+        algoIndex++;
     }
 
     private void OnSorted()
     {
         if (done) return;
-        if (sm.sorter is CS_DefaultSort) { recorder = Recorder.Get("CS_Default"); }
-        if (sm.sorter is Insertionsort)  { recorder = Recorder.Get("Insertion");  }
-        if (sm.sorter is Mergesort)      { recorder = Recorder.Get("Merge");      }
 
+        if (sm.sorter is CS_DefaultSort)
+        {
+            recorder = Recorder.Get("CS_Default");
+            algoIndex = 0;
+        }
+
+        if (sm.sorter is Insertionsort)
+        {
+            recorder = Recorder.Get("Insertion");
+            algoIndex = 1;
+        }
+
+        if (sm.sorter is Mergesort)
+        {
+            recorder = Recorder.Get("Merge");
+            algoIndex = 2;
+        }
+
+        //Only sample if the amount is different from last time
         if (recorder.isValid)
         {
             milliseconds.Add(recorder.elapsedNanoseconds * 0.000001f);
             if (milliseconds.Count > entriesForAvg)
             {
-                td.name.Add(sm.sorter.sorterName);
-                td.ms.Add(milliseconds.Average());
-                td.instances.Add(sm.balls.Length);
+                td[algoIndex].instances.Add(sm.balls.Length);
+                if (algoIndex == 0)
+                {
+                    td[algoIndex].ms_CS.Add(milliseconds.Average());
+                }
+                else if (algoIndex == 1)
+                {
+                    td[algoIndex].ms_Insert.Add(milliseconds.Average());
+                }
+                else
+                {
+                    td[algoIndex].ms_Merge.Add(milliseconds.Average());
+                }
                 milliseconds.Clear();
             }
         }
@@ -65,12 +94,6 @@ public class SortRecorder : MonoBehaviour
         sm.OnSorterChange -= OnSorterChanged;
         em.OnExperimentFinished -= OnFinish;
     }
-
-    //The data after a single sort
-    //private void OnSorted(float ms)
-    //{
-    //    //Time taken, etc
-    //}
 
     //The data after a step in the experiment (new interval)
     private void OnChangeStep()
@@ -89,48 +112,68 @@ public class SortRecorder : MonoBehaviour
 
     private void Start()
     {
-        td = new TestData(new List<string>(), new List<int>(), new List<float>());
+        for (int i = 0; i < 3; i++)
+        {
+            //td[i] = new TestData("hello", new List<int>(), new List<float>());
+        }
     }
 
-    //TODO USE 3 TESTDATAS
-    //TODO USE 3 TESTDATAS
-    //TODO USE 3 TESTDATAS
-    //TODO USE 3 TESTDATAS
-    //TODO USE 3 TESTDATAS
-
-    private void WriteResultsToFile(TestData _td)
+    private void WriteResultsToFile(TestData[] _td)
     {
         using (StreamWriter streamWriter = new StreamWriter(filename))
         {
             streamWriter.Write("instances,CS_Default,Insert,Merge");
             streamWriter.WriteLine(string.Empty);
 
-            for (int i = 0; i < _td.name.Count; i++)
+            //int length = td[0].instances.Count + td[1].instances.Count + td[2].instances.Count;
+            //f_td = new TestData("a", new List<int>(length), new List<float>(length));
+
+            
+            for (int i = 0; i < 3; i++)
             {
-                streamWriter.Write(_td.instances[i] + ",");
-                streamWriter.Write(1 + ",");
-                streamWriter.Write(1 + ",");
-                streamWriter.Write(1 + ",");
-                //streamWriter.Write(_td.ms[i].ToString(CultureInfo.InvariantCulture) + ",");
-                //streamWriter.Write(_td.ms[i + 9].ToString(CultureInfo.InvariantCulture) + ",");
-                //streamWriter.Write(_td.ms[i + 19].ToString(CultureInfo.InvariantCulture) + ",");
+                f_td.instances.AddRange(td[i].instances);
+                f_td.ms_CS.AddRange(td[i].ms_CS);
+                f_td.ms_Insert.AddRange(td[i].ms_Insert);
+                f_td.ms_Merge.AddRange(td[i].ms_Merge);
+            }
+
+            
+            
+            for (int i = 0; i < f_td.instances.Count; i++)
+            {
+                if (i >= f_td.instances.Count) return;
+                streamWriter.Write(f_td.instances[i].ToString(CultureInfo.InvariantCulture) + ",");
+                
+                if(i < f_td.ms_CS.Count)
+                    streamWriter.Write(f_td.ms_CS[i].ToString(CultureInfo.InvariantCulture) + ",");
+                
+                if(i < f_td.ms_Insert.Count)
+                    streamWriter.Write(f_td.ms_Insert[i].ToString(CultureInfo.InvariantCulture) + ",");
+                
+                if(i < f_td.ms_Merge.Count)
+                    streamWriter.Write(f_td.ms_Merge[i].ToString(CultureInfo.InvariantCulture) + ",");
                 streamWriter.WriteLine(string.Empty);
             }
+            
         }
     }
 
     [System.Serializable]
     public struct TestData
     {
-        public List<string> name;
+        public string tName;
         public List<int> instances;
-        public List<float> ms;
+        public List<float> ms_CS;
+        public List<float> ms_Insert;
+        public List<float> ms_Merge;
 
-        public TestData(List<string> _name, List<int> _instances, List<float> _ms)
+        public TestData(string n, List<int> inst, List<float> t1, List<float> t2, List<float> t3)
         {
-            name = _name;
-            instances = _instances;
-            ms = _ms;
+            tName = n;
+            instances = inst;
+            ms_CS = t1;
+            ms_Insert = t2;
+            ms_Merge = t3;
         }
     }
 }

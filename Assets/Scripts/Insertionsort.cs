@@ -16,9 +16,9 @@ public class Insertionsort : Sorter
     {
         sampler.Begin();
         Insertion(balls);
+        sampler.End();
         
         OnSorted?.Invoke();
-        sampler.End();
         
         return balls;
     }

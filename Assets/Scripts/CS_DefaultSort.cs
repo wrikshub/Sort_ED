@@ -17,9 +17,9 @@ public class CS_DefaultSort : Sorter
     {
         sampler.Begin();
         balls = balls.OrderBy(x => x.DstFromTarget).ToArray();
+        sampler.End();
         
         OnSorted?.Invoke();
-        sampler.End();
             
         return balls;
     }
