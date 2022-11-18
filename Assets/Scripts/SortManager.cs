@@ -102,7 +102,7 @@ public class SortManager : MonoBehaviour
     {
         Ball[] tempBalls = balls;
         balls = new Ball[balls.Length + amount];
-        
+
         //DRY !!! same as generateballs
         for (int i = tempBalls.Length; i < balls.Length; i++)
         {

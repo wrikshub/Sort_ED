@@ -10,27 +10,29 @@ using UnityEngine.Profiling;
 public class SortRecorder : MonoBehaviour
 {
     [SerializeField] private string filename;
-    private Profiler profiler;
     [SerializeField] private SortManager sm;
     [SerializeField] private ExperimentManager em;
     private Recorder recorder;
-    [SerializeField] private TestData[] td = new TestData[3];
-    [SerializeField] private TestData f_td = new TestData();
+    [SerializeField] private TestData td = new TestData();
     private Sorter prevSorter;
     [SerializeField] private int entriesForAvg = 200;
-    private int algoIndex = 0;
+    private int algoIndex;
 
     private List<float> milliseconds = new List<float>();
 
     private bool done = false;
 
-    private void OnEnable()
+    private void Start()
     {
+        td = new TestData("hello", new List<int>(), new List<float>(), new List<float>(), new List<float>());
         prevSorter = sm.sorter;
         sm.sorter.OnSorted += OnSorted;
         sm.OnSorterChange += OnSorterChanged;
-        em.OnNextStep += OnChangeStep;
+        em.OnNextStep += OnNextStep;
         em.OnExperimentFinished += OnFinish;
+
+        //DIVIDE BY ENTRIESFORAVG
+        foreach (var amount in em.ballAmounts) { td.instances.Add(amount); }
     }
 
     private void OnSorterChanged(Sorter newSorter)
@@ -44,117 +46,81 @@ public class SortRecorder : MonoBehaviour
     private void OnSorted()
     {
         if (done) return;
-
+        
+        recorder = Recorder.Get("CS_Default");
         if (sm.sorter is CS_DefaultSort)
         {
             recorder = Recorder.Get("CS_Default");
             algoIndex = 0;
         }
-
+        
         if (sm.sorter is Insertionsort)
         {
             recorder = Recorder.Get("Insertion");
             algoIndex = 1;
         }
-
+        
         if (sm.sorter is Mergesort)
         {
             recorder = Recorder.Get("Merge");
             algoIndex = 2;
-        }
-
-        //Only sample if the amount is different from last time
-        if (recorder.isValid)
-        {
-            milliseconds.Add(recorder.elapsedNanoseconds * 0.000001f);
-            if (milliseconds.Count > entriesForAvg)
-            {
-                td[algoIndex].instances.Add(sm.balls.Length);
-                if (algoIndex == 0)
-                {
-                    td[algoIndex].ms_CS.Add(milliseconds.Average());
-                }
-                else if (algoIndex == 1)
-                {
-                    td[algoIndex].ms_Insert.Add(milliseconds.Average());
-                }
-                else
-                {
-                    td[algoIndex].ms_Merge.Add(milliseconds.Average());
-                }
-                milliseconds.Clear();
-            }
         }
     }
 
     private void OnDisable()
     {
         sm.sorter.OnSorted -= OnSorted;
-        em.OnNextStep -= OnChangeStep;
+        em.OnNextStep -= OnNextStep;
         sm.OnSorterChange -= OnSorterChanged;
         em.OnExperimentFinished -= OnFinish;
     }
 
-    //The data after a step in the experiment (new interval)
-    private void OnChangeStep()
+    private void OnNextStep()
     {
-        //Avg time for the step, etc
-    }
-
-    //The data once the experiment is finished
-    private void OnFinish()
-    {
-        //WriteResultsToFile();
-        sm.sorter.OnSorted -= OnSorted;
-        WriteResultsToFile(td);
-        //WriteResultsToFile();
-    }
-
-    private void Start()
-    {
-        for (int i = 0; i < 3; i++)
+        if (recorder == null) return;
+        if (recorder.isValid)
         {
-            //td[i] = new TestData("hello", new List<int>(), new List<float>());
+            //milliseconds.Add(recorder.elapsedNanoseconds * 0.000001f);
+            //if (milliseconds.Count > entriesForAvg)
+            //{
+            switch (algoIndex)
+            {
+                case 0:
+                    td.ms_CS.Add(recorder.elapsedNanoseconds * 0.000001f);
+                    //td.ms_CS.Add(milliseconds.Average());
+                    break;
+                case 1:
+                    td.ms_Insert.Add(recorder.elapsedNanoseconds * 0.000001f);
+                    break;
+                case 2:
+                    td.ms_Merge.Add(recorder.elapsedNanoseconds * 0.000001f);
+                    break;
+            }
+            //milliseconds.Clear();
+            //}
         }
     }
 
-    private void WriteResultsToFile(TestData[] _td)
+    private void OnFinish()
+    {
+        sm.sorter.OnSorted -= OnSorted;
+        WriteResultsToFile();
+    }
+
+    private void WriteResultsToFile()
     {
         using (StreamWriter streamWriter = new StreamWriter(filename))
         {
             streamWriter.Write("instances,CS_Default,Insert,Merge");
-            streamWriter.WriteLine(string.Empty);
-
-            //int length = td[0].instances.Count + td[1].instances.Count + td[2].instances.Count;
-            //f_td = new TestData("a", new List<int>(length), new List<float>(length));
-
+            streamWriter.WriteLine(String.Empty);
             
-            for (int i = 0; i < 3; i++)
+            //DO NOT USE td.instancs.count - 1 IT IS TEMPORARY
+            
+            for (int i = 0; i < td.instances.Count - 1; i++)
             {
-                f_td.instances.AddRange(td[i].instances);
-                f_td.ms_CS.AddRange(td[i].ms_CS);
-                f_td.ms_Insert.AddRange(td[i].ms_Insert);
-                f_td.ms_Merge.AddRange(td[i].ms_Merge);
-            }
-
-            
-            
-            for (int i = 0; i < f_td.instances.Count; i++)
-            {
-                if (i >= f_td.instances.Count) return;
-                streamWriter.Write(f_td.instances[i].ToString(CultureInfo.InvariantCulture) + ",");
-                
-                if(i < f_td.ms_CS.Count)
-                    streamWriter.Write(f_td.ms_CS[i].ToString(CultureInfo.InvariantCulture) + ",");
-                
-                if(i < f_td.ms_Insert.Count)
-                    streamWriter.Write(f_td.ms_Insert[i].ToString(CultureInfo.InvariantCulture) + ",");
-                
-                if(i < f_td.ms_Merge.Count)
-                    streamWriter.Write(f_td.ms_Merge[i].ToString(CultureInfo.InvariantCulture) + ",");
+                streamWriter.Write($"{td.instances[i].ToString(CultureInfo.InvariantCulture)},{td.ms_CS[i].ToString(CultureInfo.InvariantCulture)},{td.ms_Insert[i].ToString(CultureInfo.InvariantCulture)},{td.ms_Merge[i].ToString(CultureInfo.InvariantCulture)}");
                 streamWriter.WriteLine(string.Empty);
             }
-            
         }
     }
 
@@ -167,13 +133,13 @@ public class SortRecorder : MonoBehaviour
         public List<float> ms_Insert;
         public List<float> ms_Merge;
 
-        public TestData(string n, List<int> inst, List<float> t1, List<float> t2, List<float> t3)
+        public TestData(string n, List<int> inst, List<float> _ms_CS, List<float> _ms_Insert, List<float> _ms_Merge)
         {
             tName = n;
             instances = inst;
-            ms_CS = t1;
-            ms_Insert = t2;
-            ms_Merge = t3;
+            ms_CS = _ms_CS;
+            ms_Insert = _ms_Insert;
+            ms_Merge = _ms_Merge;
         }
     }
 }
