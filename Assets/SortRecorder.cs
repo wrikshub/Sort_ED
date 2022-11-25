@@ -18,13 +18,14 @@ public class SortRecorder : MonoBehaviour
     [SerializeField] private int entriesForAvg = 200;
     private int algoIndex;
 
-    private List<float> milliseconds = new List<float>();
+    [SerializeField] private List<float> milliseconds = new List<float>();
 
     private bool done = false;
 
     private void Start()
     {
         td = new TestData("hello", new List<int>(), new List<float>(), new List<float>(), new List<float>());
+        recorder = Recorder.Get("CS_Default");
         prevSorter = sm.sorter;
         sm.sorter.OnSorted += OnSorted;
         sm.OnSorterChange += OnSorterChanged;
@@ -33,6 +34,12 @@ public class SortRecorder : MonoBehaviour
 
         //DIVIDE BY ENTRIESFORAVG
         foreach (var amount in em.ballAmounts) { td.instances.Add(amount); }
+    }
+
+    private void OnEnable()
+    {
+        milliseconds = new List<float>();
+        em.OnNextInstances += OnNextInstances;
     }
 
     private void OnSorterChanged(Sorter newSorter)
@@ -47,7 +54,6 @@ public class SortRecorder : MonoBehaviour
     {
         if (done) return;
         
-        recorder = Recorder.Get("CS_Default");
         if (sm.sorter is CS_DefaultSort)
         {
             recorder = Recorder.Get("CS_Default");
@@ -73,13 +79,44 @@ public class SortRecorder : MonoBehaviour
         em.OnNextStep -= OnNextStep;
         sm.OnSorterChange -= OnSorterChanged;
         em.OnExperimentFinished -= OnFinish;
+        em.OnNextInstances -= OnNextInstances;
     }
 
-    private void OnNextStep()
+    public void TakeSnapshot(int index, int maxIndex)
+    {
+        if (!recorder.isValid) return;
+        milliseconds.Add(recorder.elapsedNanoseconds * 0.000001f);
+        if (index < maxIndex) return;
+        
+        switch (algoIndex)
+        {
+            case 0:
+                td.ms_CS.Add(milliseconds.Average());
+                break;
+            case 1:
+                td.ms_Insert.Add(milliseconds.Average());
+                break;
+            case 2:
+                td.ms_Merge.Add(milliseconds.Average());
+                break;
+        }
+        
+        milliseconds.Clear();
+    }
+
+    private void OnNextInstances(int index, int maxIndex)
+    {
+        TakeSnapshot(index, maxIndex);
+    }
+    
+    private void OnNextStep(int index, int maxIndex)
     {
         if (recorder == null) return;
         if (recorder.isValid)
         {
+            
+            
+            /*
             //milliseconds.Add(recorder.elapsedNanoseconds * 0.000001f);
             //if (milliseconds.Count > entriesForAvg)
             //{
@@ -98,6 +135,7 @@ public class SortRecorder : MonoBehaviour
             }
             //milliseconds.Clear();
             //}
+            */
         }
     }
 

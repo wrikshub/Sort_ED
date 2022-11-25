@@ -280,20 +280,13 @@ MonoBehaviour:
   sm: {fileID: 466390502}
   em: {fileID: 466390505}
   td:
-  - tName: 
-    instances: 
-    ms: []
-  - tName: 
-    instances: 
-    ms: []
-  - tName: 
-    instances: 
-    ms: []
-  f_td:
     tName: 
     instances: 
-    ms: []
+    ms_CS: []
+    ms_Insert: []
+    ms_Merge: []
   entriesForAvg: 10
+  milliseconds: []
 --- !u!114 &466390505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -307,17 +300,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sortManager: {fileID: 466390502}
-  experimentDuration: 30
-  interval: 0.1
-  amount: 10
+  experimentDuration: 60
+  amount: 5
   sorters:
   - {fileID: 11400000, guid: 87b1213ce59623a43a8586280cc44388, type: 2}
   - {fileID: 11400000, guid: b3d9fc4cd59f99b44a1aac77e625124e, type: 2}
   - {fileID: 11400000, guid: 7f204a9d8099ec5498895ac9882997ff, type: 2}
-  timeTaken: 0
-  waitTime: 0.01
-  timeScale: 1
+  waitTime: 1
+  timeScale: 5
   ballAmounts: 
+  rerunsForAverage: 16
 --- !u!1 &750059710
 GameObject:
   m_ObjectHideFlags: 0

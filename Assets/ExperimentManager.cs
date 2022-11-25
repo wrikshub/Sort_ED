@@ -7,26 +7,34 @@ public class ExperimentManager : MonoBehaviour
 {
     [SerializeField] private SortManager _sortManager;
     [SerializeField] private float experimentDuration = 60f;
-    [SerializeField] private float interval = 2f;
     [SerializeField] private int amount = 100;
     [SerializeField] private Sorter[] sorters;
     public float waitTime = 0f;
     [SerializeField] private float timeScale = 1f;
     public List<int> ballAmounts = new List<int>();
     private int amountOfTimes = 0;
+    [SerializeField] private int rerunsForAverage = 5;
+    private int rerunIndex = 0;
+    private int ballIndex = 0;
+
+    public event OntoNextInstances OnNextInstances;
+
+    public delegate void OntoNextInstances(int a, int b);
 
     public event OntoNextStep OnNextStep;
-    public delegate void OntoNextStep();
+
+    public delegate void OntoNextStep(int a, int b);
+
     public event ExperimentFinished OnExperimentFinished;
+
     public delegate void ExperimentFinished();
 
     private void Awake()
     {
         Time.timeScale = timeScale;
 
-        float max = amount * (experimentDuration / interval);
-        amountOfTimes = (int) (experimentDuration / interval);
-        
+        amountOfTimes = (int) (experimentDuration / waitTime);
+
         for (int i = 1; i < amountOfTimes + 2; i++)
         {
             ballAmounts.Add(amount * i);
@@ -42,12 +50,26 @@ public class ExperimentManager : MonoBehaviour
     {
         for (int i = 0; i < 3; i++)
         {
-            if(i > 0)
-                _sortManager.ChangeSorter(sorters[i]);
-            
-            for (int j = 0; j < amountOfTimes + 1; j++)
+            if (i > 0)
             {
-                NextStep(j);
+                _sortManager.ChangeSorter(sorters[i]);
+                ballIndex = 0;
+            }
+
+            _sortManager.ChangeColors();
+
+            for (int j = 0; j < (amountOfTimes + 1) * rerunsForAverage; j++)
+            {
+                NextInstances();
+
+                if (rerunIndex >= rerunsForAverage)
+                {
+                    ballIndex++;
+                    rerunIndex = 0;
+                    NextStep(ballIndex);
+                }
+
+                rerunIndex++;
                 yield return new WaitForSeconds(waitTime);
             }
         }
@@ -55,11 +77,16 @@ public class ExperimentManager : MonoBehaviour
         EndExperiment();
     }
 
+    private void NextInstances()
+    {
+        OnNextInstances?.Invoke(rerunIndex, rerunsForAverage);
+    }
+
     private void NextStep(int index)
     {
         _sortManager.Clear();
-        _sortManager.AddBalls(ballAmounts[index]);
-        OnNextStep?.Invoke();
+        _sortManager.AddBalls(ballAmounts[index - 1]);
+        OnNextStep?.Invoke(rerunIndex, rerunsForAverage);
     }
 
     private void StartExperiment()
@@ -69,6 +96,7 @@ public class ExperimentManager : MonoBehaviour
 
     private void EndExperiment()
     {
+        ballIndex = 0;
         _sortManager.Clear();
         OnExperimentFinished?.Invoke();
     }

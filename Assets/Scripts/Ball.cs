@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
@@ -29,6 +30,11 @@ public class Ball : MonoBehaviour
         timeSinceLastCollision = collisionThreshold;
         sRend = GetComponentInChildren<SpriteRenderer>();
         realRadius = radius * 0.5f;
+    }
+
+    private void Start()
+    {
+        SetColor(Color.red);
     }
 
     internal virtual void FixedUpdate()

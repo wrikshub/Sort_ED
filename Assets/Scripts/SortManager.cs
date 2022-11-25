@@ -70,18 +70,16 @@ public class SortManager : MonoBehaviour
         if(thresholdIsHalf)
             threshold = balls.Length / 2;
         
-        //TODO Move this to Ball.cs
-        if (balls.Length == 0) return;
-        for (int i = 0; i < balls.Length; i++)
-        {
-            balls[i].IsWithin = false;
-        }
+        
+        ChangeColors();
 
-        if (balls.Length < threshold) return;
-        for (int i = 0; i < threshold; i++)
+        /*
+        foreach (var ball in balls)
         {
-            balls[i].IsWithin = true;
+            ball.SetColor(Color.white);
         }
+        */
+        
     }
     
     private void Sort()
@@ -106,7 +104,7 @@ public class SortManager : MonoBehaviour
         //DRY !!! same as generateballs
         for (int i = tempBalls.Length; i < balls.Length; i++)
         {
-            var theball = Instantiate(ball, Vector3.zero, Quaternion.identity);
+            var theball = Instantiate(ball, new Vector2(Random.Range(-5f, 5f), Random.Range(-5f, 5f)), Quaternion.identity);
             theball.transform.parent = transform;
 
             var ballComponent = theball.GetComponent<Ball>();
@@ -130,5 +128,20 @@ public class SortManager : MonoBehaviour
     {
         GenerateBalls();
         sorter.Begin();
+    }
+
+    public void ChangeColors()
+    {
+        if (balls.Length == 0) return;
+        for (int i = 0; i < balls.Length; i++)
+        {
+            balls[i].IsWithin = false;
+        }
+
+        if (balls.Length < threshold) return;
+        for (int i = 0; i < threshold; i++)
+        {
+            balls[i].IsWithin = true;
+        }
     }
 }
