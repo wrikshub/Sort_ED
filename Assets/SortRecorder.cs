@@ -15,7 +15,6 @@ public class SortRecorder : MonoBehaviour
     private Recorder recorder;
     [SerializeField] private TestData td = new TestData();
     private Sorter prevSorter;
-    [SerializeField] private int entriesForAvg = 200;
     private int algoIndex;
 
     [SerializeField] private List<float> milliseconds = new List<float>();
@@ -32,7 +31,6 @@ public class SortRecorder : MonoBehaviour
         em.OnNextStep += OnNextStep;
         em.OnExperimentFinished += OnFinish;
 
-        //DIVIDE BY ENTRIESFORAVG
         foreach (var amount in em.ballAmounts) { td.instances.Add(amount); }
     }
 
@@ -111,6 +109,10 @@ public class SortRecorder : MonoBehaviour
     
     private void OnNextStep(int index, int maxIndex)
     {
+        //TODO this might fuck it up
+        TakeSnapshot(index, maxIndex);
+        
+        return;
         if (recorder == null) return;
         if (recorder.isValid)
         {
