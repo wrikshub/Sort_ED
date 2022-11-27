@@ -238,14 +238,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 560e020bba10ddb4d9fdf06533252ad8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sorter: {fileID: 11400000, guid: 87b1213ce59623a43a8586280cc44388, type: 2}
+  sorter: {fileID: 11400000, guid: b3d9fc4cd59f99b44a1aac77e625124e, type: 2}
   ball: {fileID: 8529969479156994976, guid: 7a716306de3c3be43a9ac9d036f87bdb, type: 3}
   minSpeed: 2
   maxSpeed: 10
   target: {fileID: 1969256377}
   bounds: {x: 5, y: 5}
-  minAmount: 0
-  maxAmount: 0
+  minAmount: 250
+  maxAmount: 500
   thresholdIsHalf: 1
   threshold: 50
   balls: []
@@ -271,12 +271,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 466390501}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 011bde91be7a98b4099575ebfc7f4298, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filename: Result.csv
+  filename: Result_Final.csv
   sm: {fileID: 466390502}
   em: {fileID: 466390505}
   td:
@@ -285,7 +285,6 @@ MonoBehaviour:
     ms_CS: []
     ms_Insert: []
     ms_Merge: []
-  entriesForAvg: 10
   milliseconds: []
 --- !u!114 &466390505
 MonoBehaviour:
@@ -294,22 +293,22 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 466390501}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46c6cee7adaa3604fb10c55f16b46393, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _sortManager: {fileID: 466390502}
-  experimentDuration: 60
-  amount: 5
+  experimentDuration: 50
+  amount: 25
   sorters:
   - {fileID: 11400000, guid: 87b1213ce59623a43a8586280cc44388, type: 2}
   - {fileID: 11400000, guid: b3d9fc4cd59f99b44a1aac77e625124e, type: 2}
   - {fileID: 11400000, guid: 7f204a9d8099ec5498895ac9882997ff, type: 2}
-  waitTime: 1
-  timeScale: 5
+  waitTime: 0.25
+  timeScale: 1
   ballAmounts: 
-  rerunsForAverage: 16
+  rerunsForAverage: 10
 --- !u!1 &750059710
 GameObject:
   m_ObjectHideFlags: 0
